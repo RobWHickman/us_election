@@ -14,19 +14,19 @@ jobs:
       UK_LOCALISATION: ${{ secrets.UK_LOCALISATION }}
       ROLL_UP: ${{ secrets.ROLL_UP }}
       MARKET_TYPES: ${{ secrets.MARKET_TYPES }}
+      PSQL_STR: ${{ secrets.PSQL_STR }}
 
     steps:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Check if environment variables are set
-        run: |
-          echo "BASE_URL is set: $([[ -z "${BASE_URL}" ]] && echo "false" || echo "true")"
-          echo "BY_MARKET is set: $([[ -z "${BY_MARKET}" ]] && echo "false" || echo "true")"
-          echo "RETURN is set: $([[ -z "${RETURN}" ]] && echo "false" || echo "true")"
-          echo "UK_LOCALISATION is set: $([[ -z "${UK_LOCALISATION}" ]] && echo "false" || echo "true")"
-          echo "ROLL_UP is set: $([[ -z "${ROLL_UP}" ]] && echo "false" || echo "true")"
-          echo "MARKET_TYPES is set: $([[ -z "${MARKET_TYPES}" ]] && echo "false" || echo "true")"
+      - name: Cache built binary
+        uses: actions/cache@v3
+        with:
+          path: target/release/us_election
+          key: ${{ runner.os }}-us_election-${{ hashFiles('Cargo.toml', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-us_election-
 
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
@@ -34,8 +34,9 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Build project
-        run: cargo build
+      - name: Build project (if necessary)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: cargo build --release
 
       - name: Run project
-        run: cargo run
+        run: ./target/release/us_election
