@@ -20,6 +20,15 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build project to create cacheable directories
+        run: cargo build --release --quiet
+
       - name: Cache Cargo registry
         uses: actions/cache@v3
         with:
@@ -46,16 +55,6 @@ jobs:
           key: ${{ runner.os }}-cargo-target-${{ hashFiles('Cargo.toml', 'Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-target-
-
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-
-      - name: Build project (if necessary)
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: cargo build --release --quiet
 
       - name: Run project
         run: ./target/release/us_election
