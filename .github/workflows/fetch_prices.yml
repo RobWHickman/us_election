@@ -20,13 +20,32 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Cache built binary
+      - name: Cache Cargo registry
         uses: actions/cache@v3
         with:
-          path: target/release/us_election
-          key: ${{ runner.os }}-us_election-${{ hashFiles('Cargo.toml', 'Cargo.lock') }}
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-us_election-
+            ${{ runner.os }}-cargo-registry-
+
+      - name: Cache Cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-index-
+
+      - name: Cache target dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/release/deps
+            target/release/incremental
+            target/release/us_election
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('Cargo.toml', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-target-
 
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
