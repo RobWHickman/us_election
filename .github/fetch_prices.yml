@@ -1,0 +1,32 @@
+name: Rust Build and Run
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      BY_MARKET: ${{ secrets.BY_MARKET }}
+      RETURN: ${{ secrets.RETURN }}
+      UK_LOCALISATION: ${{ secrets.UK_LOCALISATION }}
+      ROLL_UP: ${{ secrets.ROLL_UP }}
+      MARKET_TYPES: ${{ secrets.MARKET_TYPES }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build project
+        run: cargo build
+
+      - name: Run project
+        run: cargo run
