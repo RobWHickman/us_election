@@ -55,7 +55,7 @@ jobs:
 
       - name: Build project (if necessary)
         if: steps.cache.outputs.cache-hit != 'true'
-        run: cargo build --release
+        run: cargo build --release --quiet
 
       - name: Run project
         run: ./target/release/us_election
