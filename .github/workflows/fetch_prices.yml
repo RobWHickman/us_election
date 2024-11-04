@@ -19,6 +19,15 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Check if environment variables are set
+        run: |
+          echo "BASE_URL is set: $([[ -z "${BASE_URL}" ]] && echo "false" || echo "true")"
+          echo "BY_MARKET is set: $([[ -z "${BY_MARKET}" ]] && echo "false" || echo "true")"
+          echo "RETURN is set: $([[ -z "${RETURN}" ]] && echo "false" || echo "true")"
+          echo "UK_LOCALISATION is set: $([[ -z "${UK_LOCALISATION}" ]] && echo "false" || echo "true")"
+          echo "ROLL_UP is set: $([[ -z "${ROLL_UP}" ]] && echo "false" || echo "true")"
+          echo "MARKET_TYPES is set: $([[ -z "${MARKET_TYPES}" ]] && echo "false" || echo "true")"
+
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
